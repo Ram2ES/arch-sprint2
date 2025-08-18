@@ -1,0 +1,45 @@
+@startuml
+
+title Cinema Abyss Container Diagram
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+top to bottom direction
+
+Person(user, "Пользователь", "Веб/мобильное приложение для взаимодействия с системой Cinema Abyss")
+
+System_Boundary(CinemaAbyss, "Cinema Abyss") {
+    Container(API_Gateway, "API Gateway", "Go", "Центральная точка входа для всех запросов. Реализует маршрутизацию и управление трафиком.")
+
+    Container_Boundary(IdentityDomain, "Identity Domain") {
+        Container(IdentityService, "Identity Service", "Go", "Управление аутентификацией и авторизацией пользователей")
+        Container(IdentityDB, "PostgreSQL", "Database", "Хранение данных пользователей")
+    }
+
+    Container_Boundary(MovieDomain, "Movie Domain") {
+        Container(MovieService, "Movie Service", "Go", "Управление фильмами и жанрами")
+        Container(MovieDB, "PostgreSQL", "Database", "Хранение данных фильмов и жанров")
+    }
+
+    Container_Boundary(PaymentDomain, "Payment Domain") {
+        Container(PaymentService, "Payment Service", "Go", "Управление платежами")
+        Container(PaymentDB, "PostgreSQL", "Database", "Хранение данных платежей")
+    }
+
+    Container_Boundary(SubscriptionDomain, "Subscription Domain") {
+        Container(SubscriptionService, "Subscription Service", "Go", "Управление подписками")
+        Container(SubscriptionDB, "PostgreSQL", "Database", "Хранение данных подписок")
+    }
+}
+
+Rel(user, API_Gateway, "Отправляет запросы через API Gateway")
+Rel(API_Gateway, IdentityService, "Обрабатывает запросы на аутентификацию и управление учетными записями")
+Rel(API_Gateway, MovieService, "Обрабатывает запросы на просмотр и управление фильмами")
+Rel(API_Gateway, PaymentService, "Обрабатывает запросы на создание и просмотр платежей")
+Rel(API_Gateway, SubscriptionService, "Обрабатывает запросы на управление подписками")
+
+Rel(IdentityService, IdentityDB, "Читает/записывает данные пользователей")
+Rel(MovieService, MovieDB, "Читает/записывает данные фильмов и жанров")
+Rel(PaymentService, PaymentDB, "Читает/записывает данные платежей")
+Rel(SubscriptionService, SubscriptionDB, "Читает/записывает данные подписок")
+
+@enduml
