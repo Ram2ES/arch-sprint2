@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Proxy.Controllers;
+namespace Events.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/events/[controller]")]
 public class HealthController : ControllerBase
 {
     [HttpGet]
