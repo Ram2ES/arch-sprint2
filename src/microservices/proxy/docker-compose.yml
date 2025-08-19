@@ -1,0 +1,6 @@
+﻿services:
+  proxy:
+    image: proxy
+    build:
+      context: .
+      dockerfile: Dockerfile

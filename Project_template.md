@@ -45,6 +45,27 @@
    ```
 - Протестируйте постепенный переход, изменив переменную окружения MOVIES_MIGRATION_PERCENT в файле docker-compose.yml.
 
+#### Лог прикси сервиса:
+```log
+cinemaabyss-movies-service  | get movies from movies                                                                                                                                                                                                                  
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.ClientHandler[100]                                                                                                                                                                             
+cinemaabyss-proxy-service   |       Sending HTTP request GET http://movies-service:8081/api/movies                                                                                                                                                                    
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.ClientHandler[101]                                                                                                                                                                             
+cinemaabyss-proxy-service   |       Received HTTP response headers after 3.3521ms - 200                                                                                                                                                                               
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.LogicalHandler[101]                                                                                                                                                                            
+cinemaabyss-proxy-service   |       End processing HTTP request after 3.4354ms - 200                                                                                                                                                                                  
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.LogicalHandler[100]                                                                                                                                                                            
+cinemaabyss-proxy-service   |       Start processing HTTP request GET http://monolith:8080/api/movies
+cinemaabyss-monolith        | get movies from monolith                                                                                                                                                                                                                
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.ClientHandler[100]                                                                                                                                                                             
+cinemaabyss-proxy-service   |       Sending HTTP request GET http://monolith:8080/api/movies                                                                                                                                                                          
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.ClientHandler[101]                                                                                                                                                                             
+cinemaabyss-proxy-service   |       Received HTTP response headers after 3.7848ms - 200
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.LogicalHandler[101]                                                                                                                                                                            
+cinemaabyss-proxy-service   |       End processing HTTP request after 3.8757ms - 200                                                                                                                                                                                  
+cinemaabyss-proxy-service   | info: System.Net.Http.HttpClient.Default.LogicalHandler[100]                                                                                                                                                                            
+cinemaabyss-proxy-service   |       Start processing HTTP request GET http://monolith:8080/api/movies
+```
 
 ### 2. Kafka
  Вам как архитектуру нужно также проверить гипотезу насколько просто реализовать применение Kafka в данной архитектуре.

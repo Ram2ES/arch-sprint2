@@ -69,6 +69,7 @@ build/
 out/
 target/
 .gradle/
+obj/
 
 # Node.js (for frontend or Node.js services)
 node_modules/
