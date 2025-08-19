@@ -1,0 +1,6 @@
+﻿services:
+  events:
+    image: events
+    build:
+      context: .
+      dockerfile: Dockerfile
