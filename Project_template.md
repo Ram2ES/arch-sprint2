@@ -375,6 +375,7 @@ minikube tunnel
 Потом вызовите 
 https://cinemaabyss.example.com/api/movies
 и приложите скриншот развертывания helm и вывода https://cinemaabyss.example.com/api/movies
+![Развертываение через HELM и Обращение в методы](./img/helm-start-plus-curl.png)
 
 ## Удаляем все
 

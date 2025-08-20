@@ -5,7 +5,7 @@ global:
 
 # Image pull secrets
 imagePullSecrets:
-  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6
+  dockerconfigjson: ewoJImF1dGhzIjogewogICAgIAkJImdoY3IuaW8iOiB7CiAgICAgICAgCQkiYXV0aCI6ICJVbUZ0TW1Wek9tZG9jRjlLVG1wUFNreHVURXAwYld4c1FVMWpibkJ2VmtKbU0wSklNa0kwVFcweVZUWjZOMVE9IgogICAgIAkJfQogIAl9LAoJImNyZWRzU3RvcmUiOiAiZGVza3RvcCIsCgkiY3VycmVudENvbnRleHQiOiAiZGVza3RvcC1saW51eCIsCgkicGx1Z2lucyI6IHsKCQkiZGVidWciOiB7CgkJCSJob29rcyI6ICJleGVjIgoJCX0sCgkJInNjb3V0IjogewoJCQkiaG9va3MiOiAicHVsbCxidWlsZHggYnVpbGQiCgkJfQoJfSwKCSJmZWF0dXJlcyI6IHsKCQkiaG9va3MiOiAidHJ1ZSIKCX0KfQ==
 # Database configuration
 database:
   host: postgres
@@ -33,7 +33,7 @@ database:
 monolith:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/monolith
+    repository: ghcr.io/ram2es/arch-sprint2/monolith
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -53,7 +53,7 @@ monolith:
 proxyService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/proxy-service
+    repository: ghcr.io/ram2es/arch-sprint2/proxy-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -65,15 +65,15 @@ proxyService:
       cpu: 100m
       memory: 128Mi
   service:
-    port: 80
-    targetPort: 8000
+    port: 8000
+    targetPort: 80
     type: ClusterIP
 
 # Movies service configuration
 moviesService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/movies-service
+    repository: ghcr.io/ram2es/arch-sprint2/movies-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -93,7 +93,7 @@ moviesService:
 eventsService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/events-service
+    repository: ghcr.io/ram2es/arch-sprint2/events-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -106,7 +106,7 @@ eventsService:
       memory: 128Mi
   service:
     port: 8082
-    targetPort: 8082
+    targetPort: 80
     type: ClusterIP
 
 # Kafka configuration
@@ -176,7 +176,27 @@ ingress:
         - path: /api/events
           pathType: Prefix
           service: events-service
-          port: 8082
+          port: 80
+        - path: /api/users
+          pathType: Prefix
+          service: monolith
+          port: 8080
+        - path: /api/movies
+          pathType: Prefix
+          service: movies-service
+          port: 8081
+        - path : /api/payments
+          pathType: Prefix
+          service: monolith
+          port: 8080
+        - path : /api/subscriptions
+          pathType: Prefix
+          service: monolith
+          port: 8080
+        - path: /health
+          pathType: Prefix
+          service: monolith
+          port: 8080
 
 # Application configuration
 config:
