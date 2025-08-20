@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proxy", "Proxy.csproj", "{B236425B-8887-45CB-8476-BE8D2F6BEBBB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{090FEE6A-51F6-4BFC-9D79-66D9B703FFC8}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B236425B-8887-45CB-8476-BE8D2F6BEBBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B236425B-8887-45CB-8476-BE8D2F6BEBBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B236425B-8887-45CB-8476-BE8D2F6BEBBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B236425B-8887-45CB-8476-BE8D2F6BEBBB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

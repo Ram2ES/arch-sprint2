@@ -57,12 +57,18 @@ services:
       dockerfile: Dockerfile
     container_name: cinemaabyss-monolith
     depends_on:
-      - postgres
+      postgres: 
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
       PORT: 8080
       DB_CONNECTION_STRING: postgres://postgres:postgres_password@postgres:5432/cinemaabyss?sslmode=disable
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 6
     networks:
       - cinemaabyss-network
 
@@ -73,26 +79,34 @@ services:
       dockerfile: Dockerfile
     container_name: cinemaabyss-movies-service
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     ports:
       - "8081:8081"
     environment:
       PORT: 8081
       DB_CONNECTION_STRING: postgres://postgres:postgres_password@postgres:5432/cinemaabyss?sslmode=disable
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8081/api/movies/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - cinemaabyss-network
 
   # Events Microservice
   events-service:
     build:
-      context: ./src/microservices/events
+      context: ./src/microservices/Events
       dockerfile: Dockerfile
     container_name: cinemaabyss-events-service
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      kafka: 
+        condition: service_started
     ports:
-      - "8082:8082"
+      - "8082:80"
     environment:
       PORT: 8082
       KAFKA_BROKERS: kafka:9092
@@ -106,18 +120,26 @@ services:
       dockerfile: Dockerfile
     container_name: cinemaabyss-proxy-service
     depends_on:
-      - monolith
-      - movies-service
-      - events-service
+      monolith:
+        condition: service_started
+      movies-service:
+        condition: service_started
+      events-service:
+       condition: service_started
     ports:
-      - "8000:8000"
+      - "8000:80"
     environment:
       PORT: 8000
       MONOLITH_URL: http://monolith:8080
       MOVIES_SERVICE_URL: http://movies-service:8081
       EVENTS_SERVICE_URL: http://events-service:8082
       GRADUAL_MIGRATION: "true"
-      MOVIES_MIGRATION_PERCENT: "50"
+      MOVIES_MIGRATION_PERCENT: "90"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - cinemaabyss-network
 

@@ -1,0 +1,59 @@
+@startuml
+
+title Cinema Abyss Container Diagram
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+top to bottom direction
+
+Person(user, "Пользователь", "Веб/мобильное приложение для взаимодействия с системой Cinema Abyss")
+
+System_Boundary(CinemaAbyss, "Cinema Abyss") {
+    Container(API_Gateway, "API Gateway", "Go", "Центральная точка входа для всех запросов. Реализует маршрутизацию и управление трафиком.")
+
+    Container_Boundary(IdentityDomain, "Identity Domain") {
+        Container(IdentityService, "Identity Service", "Go", "Управление аутентификацией и авторизацией пользователей")
+        Container(IdentityDB, "PostgreSQL", "Database", "Хранение данных пользователей")
+        Rel(IdentityService, IdentityDB, "Читает/записывает данные пользователей")
+    }
+
+    Container_Boundary(PaymentDomain, "Payment Domain") {
+        Container(PaymentService, "Payment Service", "Go", "Управление платежами")
+        Container(PaymentDB, "PostgreSQL", "Database", "Хранение данных платежей")
+        Rel(PaymentService, PaymentDB, "Читает/записывает данные платежей")
+    }
+
+    Container_Boundary(MovieDomain, "Movies Domain") {
+        Container(MovieService, "Movies Service", "Go", "Управление фильмами, рейтингами и жанрами")
+        Container(MovieDB, "PostgreSQL", "Database", "Хранение данных фильмов, рейтингов и жанров")
+        Rel(MovieService, MovieDB, "Читает/записывает данные фильмов и жанров")
+    }
+
+    Container_Boundary(EventsDomain, "Events Domain") {
+        Container(EventsService, "Event Service", "Go", "Управление событиями")
+        Container(Kafka, "Kafka", "Обмен событиями")
+        Container(EventsDB, "PostgreSQL", "Database", "Хранение данных по событиям")
+        Rel(EventsService, EventsDB, "Хранение истории событий")
+        Rel(EventsService, Kafka, "Публикация событий в Kafka")
+    }
+
+    Container_Boundary(SubscriptionDomain, "Subscription Domain") {
+        Container(SubscriptionService, "Subscription Service", "Go", "Управление подписками")
+        Container(SubscriptionDB, "PostgreSQL", "Database", "Хранение данных подписок")
+        Rel(SubscriptionService, SubscriptionDB, "Читает/записывает данные подписок")
+    }
+}
+
+System_Ext(PaymentSystem, "Payment System")
+Rel(PaymentSystem, API_Gateway, "Интеграция с внешней платежной системой для обработки платежей и получения статусов транзакций")
+
+Rel(user, API_Gateway, "Отправляет запросы через API Gateway")
+Rel(API_Gateway, MovieService, "Обрабатывает запросы на просмотр и управление фильмами")
+Rel(API_Gateway, IdentityService, "Обрабатывает запросы на аутентификацию и авторизацию")
+Rel(API_Gateway, EventsService, "Отправка событий")
+Rel(API_Gateway, SubscriptionService, "Обрабатывает запросы на управление подписками")
+
+Rel(Kafka, MovieService, "События фильмов (просмотр, оценка, добавление)")
+Rel(Kafka, IdentityService, "События пользователей (регистрация, вход)")
+Rel(Kafka, PaymentService, "События платежей (успешные, неудачные)")
+
+@enduml

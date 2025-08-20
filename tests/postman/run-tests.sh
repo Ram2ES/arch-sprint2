@@ -110,23 +110,23 @@ mkdir -p reports
 # Run tests
 if [ "$USE_DOCKER" = true ]; then
   echo "Running tests in Docker container..."
-  
+
   # Build the Docker image
   docker build -t cinemaabyss-api-tests .
-  
+
   # Run the tests in Docker
   docker run --network=cinemaabyss-network \
     -v "$(pwd)/reports:/app/reports" \
     cinemaabyss-api-tests $CMD_ARGS
 else
   echo "Running tests locally..."
-  
+
   # Install dependencies if node_modules doesn't exist
   if [ ! -d "node_modules" ]; then
     echo "Installing dependencies..."
     npm install
   fi
-  
+
   # Run the tests
   eval "node run-tests.js $CMD_ARGS"
 fi

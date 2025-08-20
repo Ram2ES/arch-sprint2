@@ -1,0 +1,64 @@
+name: PlantUML Diagrams
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  generate-diagrams:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '24'
+          distribution: 'adopt'
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install graphviz
+
+      - name: Install PlantUML
+        run: |
+          wget https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+          echo "PLANTUML_JAR=$(pwd)/plantuml.jar" >> $GITHUB_ENV
+
+      - name: Check PlantUML version
+        run: |
+          java -jar "$PLANTUML_JAR" -version
+
+      - name: Generate Diagrams
+        run: |
+          java -jar "$PLANTUML_JAR" arch/*.puml
+
+      - name: Commit Diagrams
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add arch/*.png
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Automated diagram generation"
+            if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+              BRANCH="${{ github.head_ref }}"
+            else
+              BRANCH="${{ github.ref_name }}"
+            fi
+            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} $BRANCH
+          fi
+    if: success()
